@@ -1,32 +1,6 @@
-// src/store/slices/authSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// Define the async thunk for registration
-export const register = createAsyncThunk(
-    'auth/register',
-    async (userData, { rejectWithValue }) => {
-        try {
-            // Replace with your API call
-            const response = await fetch('/api/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(userData),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to register');
-            }
-
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
-
+// Initial state
 const initialState = {
     user: null,
     token: null,
@@ -34,6 +8,25 @@ const initialState = {
     isLoading: false,
     error: null,
 };
+
+// Async thunk for registration
+export const register = createAsyncThunk(
+    'auth/register',
+    async (userData, thunkAPI) => {
+        try {
+            // Mock successful registration
+            // Replace with actual API call
+            const response = await new Promise((resolve) =>
+                setTimeout(() => resolve({ data: { user: userData, token: 'mock-token' } }), 1000)
+            );
+            localStorage.setItem('user', JSON.stringify(response.data.user));
+            localStorage.setItem('token', response.data.token);
+            return response.data;
+        } catch (error) {
+            return thunkAPI.rejectWithValue('Registration failed');
+        }
+    }
+);
 
 const authSlice = createSlice({
     name: 'auth',
